@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     libmagic1 \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching

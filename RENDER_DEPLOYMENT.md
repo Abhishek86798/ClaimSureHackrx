@@ -146,6 +146,39 @@ if __name__ == "__main__":
 
 ---
 
+## 🐳 **Docker Compatibility**
+
+### **Docker Build Issues Fixed**
+
+The project now includes Docker-specific configurations to avoid common build issues:
+
+**✅ Fixed Issues:**
+- **Windows-specific packages** removed (pywin32, pywinpty)
+- **Linux-compatible requirements** in `requirements-docker.txt`
+- **Proper system dependencies** in Dockerfile
+- **Health checks** for container monitoring
+
+**Docker Files:**
+- `Dockerfile` - Linux-compatible container configuration
+- `requirements-docker.txt` - Linux-specific dependencies
+- `docker-compose.yml` - Multi-service orchestration
+- `build-docker.sh` - Build and test script
+
+### **Docker Build Commands**
+
+```bash
+# Build Docker image
+docker build -t claimsure:latest .
+
+# Run container
+docker run -d --name claimsure -p 8000:8000 claimsure:latest
+
+# Test with Docker Compose
+docker-compose up -d
+```
+
+---
+
 ## 🚨 **Common Issues & Solutions**
 
 ### **Issue 1: Build Fails with Python Version**
@@ -177,6 +210,13 @@ if __name__ == "__main__":
 **Solution**:
 - ✅ Upgrade to paid plan for more resources
 - ✅ Use `requirements-minimal.txt` (lighter dependencies)
+
+### **Issue 6: Docker Build Fails**
+**Error**: `pywin32==311` not found
+**Solution**:
+- ✅ Use `requirements-docker.txt` for Docker builds
+- ✅ Windows-specific packages excluded
+- ✅ Linux-compatible dependencies only
 
 ---
 
