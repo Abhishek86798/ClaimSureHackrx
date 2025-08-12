@@ -91,7 +91,7 @@ git push heroku master
 ### Step 1: Prepare Your Repository
 Ensure your repository has:
 - ✅ `requirements-minimal.txt` (for production)
-- ✅ `runtime.txt` (Python 3.11.9)
+- ✅ `runtime.txt` (Python 3.10.12)
 - ✅ `run.py` (main application file)
 - ✅ Environment variables documented
 
