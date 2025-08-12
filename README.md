@@ -1,233 +1,334 @@
-# Claimsure - LLM-Powered Document Query System
+# Claimsure - LLM-Powered Insurance Document Query System
 
-A comprehensive Python-based system for intelligent document processing and querying using Large Language Models (LLMs). The system combines vector embeddings, semantic search, and AI-powered response generation to provide an intuitive document management solution.
+[![Python](https://img.shields.io/badge/Python-3.10.12-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.25+-red.svg)](https://streamlit.io/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## Features
+> **Intelligent document processing and querying system for insurance documents using hybrid LLM processing**
 
-- **📄 Document Processing**: Support for PDF, DOCX, and TXT files with intelligent chunking
-- **🔍 Vector Search**: High-dimensional embeddings using sentence transformers for semantic search
-- **🤖 LLM Integration**: OpenAI GPT models for context-aware response generation
-- **🚀 FastAPI Backend**: RESTful API with comprehensive documentation
-- **💻 Streamlit Frontend**: Modern web interface with drag-and-drop upload
-- **🗄️ Vector Database**: Pinecone integration for scalable vector storage
-- **⚙️ Configurable**: Highly customizable processing parameters and thresholds
+## 🚀 **Quick Deploy to Render (Recommended)**
 
-## Project Structure
+**Deploy Claimsure in 5 minutes with Render's free tier:**
+
+1. **Fork/Clone** this repository
+2. **Sign up** at [render.com](https://render.com)
+3. **Create Web Service** and connect your repository
+4. **Set environment variables** (API keys)
+5. **Deploy** automatically
+
+📖 **[Complete Render Deployment Guide](RENDER_DEPLOYMENT.md)**
+
+---
+
+## 🎯 **Features**
+
+- 🔍 **Hybrid LLM Processing**: Claude 3.5 Sonnet, Gemini, Hugging Face, OpenAI GPT-3.5
+- 📄 **Multi-format Support**: PDF, DOCX, TXT documents
+- 🧠 **Semantic Search**: FAISS vector embeddings for intelligent retrieval
+- 🤖 **Query Understanding**: Intent classification and entity extraction
+- 💡 **Decision Logic**: AI-powered reasoning over retrieved clauses
+- 🌐 **RESTful API**: FastAPI backend with comprehensive endpoints
+- 🎨 **Web Interface**: Streamlit UI for document upload and querying
+- 🔄 **Fallback Systems**: Robust error handling and service redundancy
+
+---
+
+## 🏗️ **Architecture**
 
 ```
-Claimsure/
-├── src/                    # Main application source code
-│   ├── document_loader.py  # Document loading and parsing
-│   ├── text_chunker.py     # Text chunking and processing
-│   ├── embeddings.py       # Vector embedding generation
-│   ├── vector_store.py     # Vector database operations
-│   ├── llm.py             # LLM interface and text generation
-│   ├── query_processor.py # Query processing orchestration
-│   ├── api.py             # FastAPI application
-│   ├── models.py          # Pydantic models for API
-│   └── ui.py              # Streamlit web interface
-├── utils/                  # Utility functions and helpers
-├── core/                   # Core business logic
-├── tests/                  # Test files
-├── data/                   # Data storage and sample files
-├── config.py              # Configuration constants
-├── requirements.txt        # Python dependencies
-├── run.py                 # Main application runner
-├── run_ui.py              # Streamlit UI launcher
-└── test_api.py            # API testing script
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Document      │    │   Query         │    │   Response      │
+│   Upload        │───▶│   Processing    │───▶│   Generation    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Chunking &    │    │   Semantic      │    │   JSON          │
+│   Embedding     │    │   Retrieval     │    │   Formatting    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-## Installation
+---
 
-### Prerequisites
-- **Python 3.11+** (recommended: Python 3.11.9)
-- **Git**
-- **Docker** (optional, for containerized deployment)
+## 🚀 **Deployment Options**
 
-### Quick Start
+### **1. Render (Recommended - Free)**
+```bash
+# Build Command: pip install -r requirements-minimal.txt
+# Start Command: python run.py
+```
+- ✅ **Free tier available**
+- ✅ **Automatic deployments**
+- ✅ **SSL certificates included**
+- 📖 **[Deployment Guide](RENDER_DEPLOYMENT.md)**
 
-1. **Clone the repository:**
+### **2. Railway (Simple - Free)**
+```bash
+# Auto-detects Python
+# No configuration needed
+```
+- ✅ **Free tier available**
+- ✅ **Simple deployment process**
+
+### **3. Heroku (Professional - Paid)**
+```bash
+# Uses Procfile: web: python run.py
+# Requires paid plan
+```
+
+### **4. Local Development**
 ```bash
 git clone https://github.com/Abhishek86798/ClaimSureHackrx.git
 cd ClaimSureHackrx
+pip install -r requirements-minimal.txt
+python run.py
 ```
 
-2. **Create and activate virtual environment:**
+---
 
-**On Windows (PowerShell):**
-```powershell
-python -m venv venv
-.\venv\Scripts\Activate.ps1
-```
+## 📋 **Prerequisites**
 
-**On Windows (Command Prompt):**
-```cmd
-python -m venv venv
-venv\Scripts\activate
-```
+- **Python 3.10+** (3.10.12 recommended)
+- **API Keys** for LLM services:
+  - Google Gemini API
+  - Anthropic Claude API
+  - Hugging Face API
+  - OpenAI API (optional)
 
-**On macOS/Linux:**
+---
+
+## 🔧 **Installation**
+
+### **For Production (Render)**
 ```bash
-python -m venv venv
-source venv/bin/activate
-```
-
-3. **Install dependencies:**
-
-**For Production (recommended):**
-```bash
+# Use requirements-minimal.txt (already configured)
 pip install -r requirements-minimal.txt
 ```
 
-**For Development (full features):**
+### **For Development**
 ```bash
+# Use full requirements.txt
 pip install -r requirements.txt
 ```
 
-4. **Set up environment variables:**
+### **Environment Setup**
 ```bash
-# Create .env file with your API keys
-OPENAI_API_KEY=your_openai_api_key_here
-PINECONE_API_KEY=your_pinecone_api_key_here
-PINECONE_ENVIRONMENT=your_pinecone_environment_here
+# Copy environment template
+cp env_template.txt .env
+
+# Edit .env with your API keys
+GOOGLE_AI_API_KEY=your_gemini_key
+ANTHROPIC_API_KEY=your_claude_key
+HUGGINGFACE_API_KEY=your_hf_key
+OPENAI_API_KEY=your_openai_key
 ```
 
-**💡 Quick Activation (Windows):**
-```powershell
-.\activate_venv.ps1
-```
+---
 
-## Quick Start
+## 🚀 **Quick Start**
 
-### 1. Start the API Server
-
+### **1. Start the API Server**
 ```bash
-# Start the FastAPI backend
-python -m uvicorn src.api:app --host 0.0.0.0 --port 8000 --reload
+python run.py
 ```
+**API will be available at**: `http://localhost:8000`
 
-The API will be available at:
-- **API**: http://localhost:8000
-- **Documentation**: http://localhost:8000/docs
-- **Health Check**: http://localhost:8000/health
-
-### 2. Start the Web Interface
-
+### **2. Start the Web Interface**
 ```bash
-# In a new terminal, start the Streamlit UI
-python run_ui.py
+streamlit run app/webapp.py
 ```
+**Web UI will be available at**: `http://localhost:8501`
 
-The web interface will be available at:
-- **UI**: http://localhost:8501
-
-### 3. Test the System
-
+### **3. Test the API**
 ```bash
-# Test the API endpoints
-python test_api.py
-```
+# Health check
+curl http://localhost:8000/health
 
-## Usage
-
-### Web Interface
-
-1. **Upload Documents**: Use the drag-and-drop interface to upload PDF, DOCX, or TXT files
-2. **Process Documents**: Click "Process Documents" to chunk and embed your files
-3. **Query Documents**: Ask natural language questions about your documents
-4. **View Results**: See AI-generated responses with source citations
-
-### API Usage
-
-#### Upload Documents
-```bash
-curl -X POST "http://localhost:8000/upload" \
+# Process documents and questions
+curl -X POST http://localhost:8000/hackrx/run \
   -H "Content-Type: application/json" \
   -d '{
-    "file_paths": ["data/sample_document.txt"],
-    "chunk_size": 1000,
-    "chunk_overlap": 200
+    "documents": "sample_insurance_policy.txt",
+    "questions": ["What is covered under this policy?"]
   }'
 ```
 
-#### Query Documents
+---
+
+## 📚 **API Endpoints**
+
+### **Health Check**
+```http
+GET /health
+```
+**Response**: `{"status": "healthy"}`
+
+### **Process Documents & Questions**
+```http
+POST /hackrx/run
+Content-Type: application/json
+
+{
+  "documents": "document_url_or_content",
+  "questions": ["question1", "question2"]
+}
+```
+
+### **Statistics**
+```http
+GET /stats
+```
+**Response**: System statistics and service status
+
+---
+
+## 🔧 **Configuration**
+
+### **Environment Variables**
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `GOOGLE_AI_API_KEY` | Gemini API key | Yes |
+| `ANTHROPIC_API_KEY` | Claude API key | Yes |
+| `HUGGINGFACE_API_KEY` | Hugging Face API key | Yes |
+| `OPENAI_API_KEY` | OpenAI API key | Optional |
+| `ENVIRONMENT` | Environment (production/development) | No |
+| `API_HOST` | API host (0.0.0.0 for production) | No |
+| `API_PORT` | API port (8000) | No |
+
+### **LLM Service Priority**
+1. **Hugging Face Enhanced** (primary)
+2. **Claude 3.5 Sonnet** (fallback)
+3. **Gemini** (fallback)
+4. **Local Mistral** (offline fallback)
+5. **OpenAI GPT-3.5** (last resort)
+
+---
+
+## 🧪 **Testing**
+
+### **Run Deployment Check**
 ```bash
-curl -X POST "http://localhost:8000/query" \
+python deploy.py
+```
+
+### **Test API Endpoints**
+```bash
+# Health check
+curl http://localhost:8000/health
+
+# Process sample document
+curl -X POST http://localhost:8000/hackrx/run \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "What is this document about?",
-    "top_k": 5,
-    "similarity_threshold": 0.7
+    "documents": "sample_insurance_policy.txt",
+    "questions": ["What is the waiting period for pre-existing diseases?"]
   }'
 ```
 
-## API Endpoints
+---
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | API information |
-| `/health` | GET | Health check |
-| `/upload` | POST | Upload and process documents |
-| `/query` | POST | Process single query |
-| `/query/batch` | POST | Process multiple queries |
-| `/system/info` | GET | System information |
-| `/system/stats` | GET | System statistics |
+## 📁 **Project Structure**
 
-## Configuration
-
-The system is highly configurable through `config.py`:
-
-- **Document Processing**: Chunk size, overlap, file size limits
-- **Embedding Model**: Model selection and batch sizes
-- **Vector Database**: Pinecone configuration and settings
-- **LLM Settings**: Model selection, temperature, max tokens
-- **API Configuration**: Host, port, reload settings
-- **Search Parameters**: Top-K results, similarity thresholds
-
-## Development
-
-### Running Tests
-
-```bash
-# Test the API
-python test_api.py
-
-# Run unit tests
-python -m pytest tests/
+```
+ClaimSureHackrx/
+├── src/
+│   ├── main.py                 # FastAPI application
+│   ├── core/
+│   │   ├── hybrid_processor.py # LLM service orchestration
+│   │   ├── embeddings.py       # Vector embeddings
+│   │   ├── query_processing.py # Query understanding
+│   │   ├── retrieval.py        # Semantic search
+│   │   ├── logic_evaluator.py  # Decision logic
+│   │   └── services/           # LLM service integrations
+│   ├── document_loader.py      # Document parsing
+│   └── text_chunker.py         # Text chunking
+├── app/
+│   └── webapp.py              # Streamlit web interface
+├── requirements-minimal.txt    # Production dependencies
+├── requirements.txt           # Development dependencies
+├── runtime.txt                # Python version specification
+├── run.py                     # Application entry point
+├── RENDER_DEPLOYMENT.md       # Render deployment guide
+└── README.md                  # This file
 ```
 
-### Code Quality
+---
 
-```bash
-# Format code
-black .
-isort .
+## 🔄 **Development Workflow**
 
-# Type checking
-mypy src/
-```
+1. **Clone** the repository
+2. **Install** dependencies: `pip install -r requirements.txt`
+3. **Set** environment variables in `.env`
+4. **Run** locally: `python run.py`
+5. **Test** endpoints and functionality
+6. **Deploy** to Render using the deployment guide
 
-## Architecture
+---
 
-The system follows a modular architecture:
+## 🚨 **Troubleshooting**
 
-1. **Document Loader** → Loads and parses documents
-2. **Text Chunker** → Splits documents into chunks
-3. **Embedding Generator** → Creates vector embeddings
-4. **Vector Store** → Stores and retrieves embeddings
-5. **LLM Interface** → Generates AI responses
-6. **Query Processor** → Orchestrates the complete pipeline
-7. **API Layer** → Provides REST endpoints
-8. **Web Interface** → User-friendly UI
+### **Common Issues**
 
-## Contributing
+**Build Fails on Render:**
+- ✅ Use `requirements-minimal.txt` (not `requirements.txt`)
+- ✅ Check Python version in `runtime.txt`
+- ✅ Verify environment variables are set
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+**API Keys Not Working:**
+- ✅ Check API key format and validity
+- ✅ Ensure environment variables are set correctly
+- ✅ Verify API quotas and billing
 
-## License
+**Memory Issues:**
+- ✅ Upgrade to paid Render plan
+- ✅ Use minimal requirements file
+- ✅ Monitor resource usage
 
-MIT License - see LICENSE file for details.
+---
+
+## 📊 **Performance**
+
+- **Response Time**: < 5 seconds for typical queries
+- **Memory Usage**: ~512MB (free tier)
+- **Concurrent Requests**: 10+ (depends on plan)
+- **Document Size**: Up to 50MB per document
+
+---
+
+## 🤝 **Contributing**
+
+1. **Fork** the repository
+2. **Create** a feature branch
+3. **Make** your changes
+4. **Test** thoroughly
+5. **Submit** a pull request
+
+---
+
+## 📄 **License**
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 **Acknowledgments**
+
+- **FastAPI** for the web framework
+- **Streamlit** for the web interface
+- **Hugging Face** for open-source models
+- **Anthropic** for Claude API
+- **Google** for Gemini API
+- **OpenAI** for GPT API
+
+---
+
+## 📞 **Support**
+
+- 📖 **[Render Deployment Guide](RENDER_DEPLOYMENT.md)**
+- 🐛 **[Issues](https://github.com/Abhishek86798/ClaimSureHackrx/issues)**
+- 📧 **Email**: [Your Email]
+
+---
+
+**Ready to deploy?** 🚀 **[Start with Render](RENDER_DEPLOYMENT.md)**

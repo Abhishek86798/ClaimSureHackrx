@@ -121,26 +121,52 @@ def test_local_run():
         print(f"❌ Local run test failed: {e}")
         return False
 
-def get_deployment_recommendation():
-    """Provide deployment recommendations"""
-    print("\n🎯 Deployment Recommendations:")
-    print("\n1. 🚀 Render (Recommended - Free)")
-    print("   - Sign up at render.com")
-    print("   - Connect GitHub repository")
+def check_render_compatibility():
+    """Check if the project is ready for Render deployment"""
+    print("\n🔍 Render Compatibility Check:")
+    
+    # Check runtime.txt
+    if Path('runtime.txt').exists():
+        with open('runtime.txt', 'r') as f:
+            python_version = f.read().strip()
+        print(f"✅ Python version specified: {python_version}")
+    else:
+        print("❌ runtime.txt missing")
+        return False
+    
+    # Check requirements-minimal.txt
+    if Path('requirements-minimal.txt').exists():
+        print("✅ requirements-minimal.txt present")
+    else:
+        print("❌ requirements-minimal.txt missing")
+        return False
+    
+    # Check main entry point
+    if Path('run.py').exists():
+        print("✅ run.py entry point present")
+    else:
+        print("❌ run.py missing")
+        return False
+    
+    return True
+
+def get_render_deployment_guide():
+    """Provide Render-specific deployment guide"""
+    print("\n🎯 Render Deployment Guide:")
+    print("\n1. 🚀 Sign up at render.com")
+    print("2. 📦 Create new Web Service")
+    print("3. 🔗 Connect GitHub repository")
+    print("4. ⚙️  Configure build settings:")
     print("   - Build Command: pip install -r requirements-minimal.txt")
     print("   - Start Command: python run.py")
+    print("5. 🔑 Set environment variables:")
+    print("   - GOOGLE_AI_API_KEY")
+    print("   - ANTHROPIC_API_KEY")
+    print("   - HUGGINGFACE_API_KEY")
+    print("   - OPENAI_API_KEY")
+    print("6. 🚀 Deploy!")
     
-    print("\n2. 🚂 Railway (Simple - Free)")
-    print("   - Sign up at railway.app")
-    print("   - Connect GitHub repository")
-    print("   - Auto-detects Python")
-    
-    print("\n3. 🏗️ Heroku (Professional - Paid)")
-    print("   - Install Heroku CLI")
-    print("   - heroku create claimsure-app")
-    print("   - git push heroku master")
-    
-    print("\n❌ Avoid Netlify - Not suitable for Python applications")
+    print("\n📖 For detailed guide, see: RENDER_DEPLOYMENT.md")
 
 def main():
     """Main deployment check function"""
@@ -152,22 +178,35 @@ def main():
         check_dependencies(),
         check_environment_variables(),
         check_files(),
-        test_local_run()
+        test_local_run(),
+        check_render_compatibility()
     ]
     
     print("\n" + "=" * 50)
     
     if all(checks):
-        print("🎉 All checks passed! Ready for deployment.")
-        get_deployment_recommendation()
+        print("🎉 All checks passed! Ready for Render deployment.")
+        get_render_deployment_guide()
+        
+        print("\n🚀 Quick Deploy Commands:")
+        print("1. Go to render.com and sign up")
+        print("2. Create new Web Service")
+        print("3. Connect your GitHub repository")
+        print("4. Set build command: pip install -r requirements-minimal.txt")
+        print("5. Set start command: python run.py")
+        print("6. Add environment variables")
+        print("7. Deploy!")
+        
     else:
         print("⚠️  Some checks failed. Please fix issues before deployment.")
         print("\n💡 Quick fixes:")
         print("1. Install dependencies: pip install -r requirements-minimal.txt")
         print("2. Set environment variables in .env file")
         print("3. Ensure all files are present")
+        print("4. Check Python version compatibility")
     
-    print("\n📚 For detailed deployment guide, see DEPLOYMENT_GUIDE.md")
+    print("\n📚 For detailed deployment guide, see RENDER_DEPLOYMENT.md")
+    print("🌐 Render website: https://render.com")
 
 if __name__ == "__main__":
     main()
