@@ -27,9 +27,9 @@ Before deploying, ensure you have:
 ### **Step 1: Prepare Your Repository**
 
 Your repository should already have these files:
-- ✅ `requirements-minimal.txt` (for production)
+- ✅ `app.py` (main application entry point)
+- ✅ `requirements.txt` (production dependencies)
 - ✅ `runtime.txt` (Python 3.10.12)
-- ✅ `run.py` (main application file)
 - ✅ `src/main.py` (FastAPI app)
 
 ### **Step 2: Sign Up for Render**
@@ -55,8 +55,8 @@ Your repository should already have these files:
 - **Root Directory**: Leave empty (root of repository)
 
 **Build & Deploy Settings:**
-- **Build Command**: `pip install -r requirements-minimal.txt`
-- **Start Command**: `python run.py`
+- **Build Command**: `pip install -r requirements.txt`
+- **Start Command**: `python app.py`
 - **Plan**: Free (or paid for more resources)
 
 ### **Step 5: Set Environment Variables**
@@ -89,10 +89,30 @@ LOG_LEVEL=INFO
 
 ## 🔧 **Configuration Files**
 
-### **requirements-minimal.txt** (Already Updated)
+### **app.py** (Main Entry Point)
+```python
+#!/usr/bin/env python3
+"""
+Claimsure - Main Application Entry Point
+FastAPI application for insurance document query system
+"""
+
+import uvicorn
+from src.main import app
+
+if __name__ == "__main__":
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000,
+        reload=False
+    )
+```
+
+### **requirements.txt** (Production Dependencies)
 ```txt
-# Claimsure - Minimal Requirements for Production
-# Compatible with Python 3.8+
+# Claimsure - Production Requirements for Render
+# Python version: 3.10.12 (compatible with 3.8+)
 
 # Core Framework
 fastapi>=0.100.0,<0.120.0
@@ -125,23 +145,9 @@ aiofiles>=23.0.0,<24.0.0
 python-json-logger>=2.0.0,<3.0.0
 ```
 
-### **runtime.txt** (Already Updated)
+### **runtime.txt** (Python Version)
 ```txt
 python-3.10.12
-```
-
-### **run.py** (Main Entry Point)
-```python
-import uvicorn
-from src.main import app
-
-if __name__ == "__main__":
-    uvicorn.run(
-        "src.main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=False
-    )
 ```
 
 ---
@@ -181,37 +187,45 @@ docker-compose up -d
 
 ## 🚨 **Common Issues & Solutions**
 
-### **Issue 1: Build Fails with Python Version**
+### **Issue 1: Nixpacks Can't Detect Python App**
+**Error**: "Nixpacks couldn't detect your Python app"
+**Solution**: 
+- ✅ **app.py** in root directory (entry point)
+- ✅ **requirements.txt** in root directory
+- ✅ **runtime.txt** for Python version
+- ✅ **src/main.py** contains FastAPI app
+
+### **Issue 2: Build Fails with Python Version**
 **Error**: `python-build: definition not found: python-3.10.12`
 **Solution**: 
 - ✅ Already fixed with `runtime.txt`
 - ✅ Render supports Python 3.10.12
 
-### **Issue 2: Missing Dependencies**
+### **Issue 3: Missing Dependencies**
 **Error**: `ModuleNotFoundError: No module named 'fastapi'`
 **Solution**:
-- ✅ Use `requirements-minimal.txt` (not `requirements.txt`)
+- ✅ Use `requirements.txt` (not `requirements-minimal.txt`)
 - ✅ Check build logs for specific missing packages
 
-### **Issue 3: Environment Variables Not Set**
+### **Issue 4: Environment Variables Not Set**
 **Error**: `KeyError: 'GOOGLE_AI_API_KEY'`
 **Solution**:
 - ✅ Add all required environment variables in Render dashboard
 - ✅ Ensure no typos in variable names
 
-### **Issue 4: Port Issues**
+### **Issue 5: Port Issues**
 **Error**: `Address already in use`
 **Solution**:
 - ✅ Use port 8000 (Render's default)
 - ✅ Set `API_HOST=0.0.0.0` in environment variables
 
-### **Issue 5: Memory Issues**
+### **Issue 6: Memory Issues**
 **Error**: `MemoryError` or build timeout
 **Solution**:
 - ✅ Upgrade to paid plan for more resources
-- ✅ Use `requirements-minimal.txt` (lighter dependencies)
+- ✅ Use `requirements.txt` (optimized for production)
 
-### **Issue 6: Docker Build Fails**
+### **Issue 7: Docker Build Fails**
 **Error**: `pywin32==311` not found
 **Solution**:
 - ✅ Use `requirements-docker.txt` for Docker builds
@@ -264,8 +278,8 @@ Render automatically deploys when you:
 - ✅ **Redeploy** manually from dashboard
 
 **Deployment Process**:
-1. **Build**: Install dependencies from `requirements-minimal.txt`
-2. **Start**: Run `python run.py`
+1. **Build**: Install dependencies from `requirements.txt`
+2. **Start**: Run `python app.py`
 3. **Health Check**: Verify `/health` endpoint responds
 4. **Live**: Your app is accessible at the provided URL
 

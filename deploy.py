@@ -82,8 +82,8 @@ def check_files():
     print("\n📁 Checking required files...")
     
     required_files = [
-        'run.py',
-        'requirements-minimal.txt',
+        'app.py',
+        'requirements.txt',
         'runtime.txt',
         'src/main.py'
     ]
@@ -134,18 +134,18 @@ def check_render_compatibility():
         print("❌ runtime.txt missing")
         return False
     
-    # Check requirements-minimal.txt
-    if Path('requirements-minimal.txt').exists():
-        print("✅ requirements-minimal.txt present")
+    # Check requirements.txt
+    if Path('requirements.txt').exists():
+        print("✅ requirements.txt present")
     else:
-        print("❌ requirements-minimal.txt missing")
+        print("❌ requirements.txt missing")
         return False
     
     # Check main entry point
-    if Path('run.py').exists():
-        print("✅ run.py entry point present")
+    if Path('app.py').exists():
+        print("✅ app.py entry point present")
     else:
-        print("❌ run.py missing")
+        print("❌ app.py missing")
         return False
     
     return True
@@ -157,8 +157,8 @@ def get_render_deployment_guide():
     print("2. 📦 Create new Web Service")
     print("3. 🔗 Connect GitHub repository")
     print("4. ⚙️  Configure build settings:")
-    print("   - Build Command: pip install -r requirements-minimal.txt")
-    print("   - Start Command: python run.py")
+    print("   - Build Command: pip install -r requirements.txt")
+    print("   - Start Command: python app.py")
     print("5. 🔑 Set environment variables:")
     print("   - GOOGLE_AI_API_KEY")
     print("   - ANTHROPIC_API_KEY")
@@ -192,15 +192,15 @@ def main():
         print("1. Go to render.com and sign up")
         print("2. Create new Web Service")
         print("3. Connect your GitHub repository")
-        print("4. Set build command: pip install -r requirements-minimal.txt")
-        print("5. Set start command: python run.py")
+        print("4. Set build command: pip install -r requirements.txt")
+        print("5. Set start command: python app.py")
         print("6. Add environment variables")
         print("7. Deploy!")
         
     else:
         print("⚠️  Some checks failed. Please fix issues before deployment.")
         print("\n💡 Quick fixes:")
-        print("1. Install dependencies: pip install -r requirements-minimal.txt")
+        print("1. Install dependencies: pip install -r requirements.txt")
         print("2. Set environment variables in .env file")
         print("3. Ensure all files are present")
         print("4. Check Python version compatibility")
