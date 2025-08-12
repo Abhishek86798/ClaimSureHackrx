@@ -10,7 +10,7 @@
 .env.local
 .env.production
 .env.staging
-.env.template
+!.env.template
 
 # Configuration files with sensitive data
 config.json
