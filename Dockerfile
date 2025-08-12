@@ -1,7 +1,7 @@
 # Claimsure - Insurance Document Query System
 # Production Dockerfile
 
-FROM python:3.13.5-slim
+FROM python:3.11.9-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1

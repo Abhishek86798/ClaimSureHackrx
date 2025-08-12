@@ -1,7 +1,7 @@
 # Claimsure - Insurance Document Query System
 # Requirements file with locked versions for consistency
 # Generated on: 2025-01-27
-# Python version: 3.13.5
+# Python version: 3.11.9
 
 # =============================================================================
 # Core Framework Dependencies

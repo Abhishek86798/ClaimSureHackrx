@@ -39,10 +39,17 @@ Claimsure/
 
 ## Installation
 
+### Prerequisites
+- **Python 3.11+** (recommended: Python 3.11.9)
+- **Git**
+- **Docker** (optional, for containerized deployment)
+
+### Quick Start
+
 1. **Clone the repository:**
 ```bash
-git clone <repository-url>
-cd Claimsure
+git clone https://github.com/Abhishek86798/ClaimSureHackrx.git
+cd ClaimSureHackrx
 ```
 
 2. **Create and activate virtual environment:**
@@ -66,6 +73,13 @@ source venv/bin/activate
 ```
 
 3. **Install dependencies:**
+
+**For Production (recommended):**
+```bash
+pip install -r requirements-minimal.txt
+```
+
+**For Development (full features):**
 ```bash
 pip install -r requirements.txt
 ```

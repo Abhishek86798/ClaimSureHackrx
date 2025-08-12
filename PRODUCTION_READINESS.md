@@ -23,7 +23,7 @@ The Claimsure system is production-ready with comprehensive features, robust arc
 - [x] **Error Handling**: Comprehensive exception management
 
 ### ✅ **Dependencies & Compatibility**
-- [x] **Python 3.13.5**: Latest stable version
+- [x] **Python 3.11.9**: Stable, widely-supported version
 - [x] **Locked Dependencies**: All packages have exact versions
 - [x] **Core Dependencies**: FastAPI, Uvicorn, Streamlit available
 - [x] **LLM Services**: Multiple providers (Gemini, Claude, HF, OpenAI)
@@ -42,7 +42,7 @@ The Claimsure system is production-ready with comprehensive features, robust arc
 
 #### Dockerfile
 ```dockerfile
-FROM python:3.13.5-slim
+FROM python:3.11.9-slim
 
 WORKDIR /app
 
@@ -150,7 +150,7 @@ source venv/bin/activate  # Linux/Mac
 venv\Scripts\activate     # Windows
 
 # 3. Install dependencies
-pip install -r requirements.txt
+pip install -r requirements-minimal.txt
 
 # 4. Configure environment
 cp env_template.txt .env
@@ -331,7 +331,7 @@ curl -X POST "http://your-domain.com/hackrx/run" \
 git clone https://github.com/Abhishek86798/ClaimSureHackrx.git
 cd ClaimSureHackrx
 python -m venv venv && venv\Scripts\activate
-pip install -r requirements.txt
+pip install -r requirements-minimal.txt
 
 # 2. Configure
 cp env_template.txt .env
