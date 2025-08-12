@@ -1,5 +1,5 @@
-# Use Python 3.10.12 slim image for smaller size
-FROM python:3.10.12-slim
+# Use official Python 3.10.12 image
+FROM python:3.10.12
 
 # Set working directory
 WORKDIR /app
@@ -17,12 +17,12 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
-COPY requirements-docker.txt requirements.txt
+# Copy requirements file
+COPY requirements.txt .
 
 # Install Python dependencies
-RUN python -m pip install --no-cache-dir --upgrade pip && \
-    python -m pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY . .

@@ -7,8 +7,15 @@ set -e
 
 echo "🐳 Building Claimsure Docker Image..."
 
-# Build the Docker image
-docker build -t claimsure:latest .
+# Check if Docker is running
+if ! docker info > /dev/null 2>&1; then
+    echo "❌ Docker is not running. Please start Docker and try again."
+    exit 1
+fi
+
+# Build the Docker image using the simple Dockerfile
+echo "📦 Building with Dockerfile.simple..."
+docker build -f Dockerfile.simple -t claimsure:latest .
 
 echo "✅ Docker image built successfully!"
 
@@ -20,7 +27,7 @@ docker run --rm -d --name claimsure-test -p 8000:8000 claimsure:latest
 
 # Wait for the container to start
 echo "⏳ Waiting for container to start..."
-sleep 10
+sleep 15
 
 # Test health endpoint
 echo "🔍 Testing health endpoint..."
@@ -28,6 +35,8 @@ if curl -f http://localhost:8000/health; then
     echo "✅ Health check passed!"
 else
     echo "❌ Health check failed!"
+    echo "📋 Container logs:"
+    docker logs claimsure-test
 fi
 
 # Stop the test container
