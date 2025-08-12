@@ -1,0 +1,31 @@
+[build]
+  # This is a Python application, not a Node.js app
+  # Netlify is primarily for static sites and Node.js apps
+  # For Python applications, consider other deployment options
+  
+  # Disable automatic Node.js detection
+  ignore = "node_modules"
+  
+  # Specify Python build requirements
+  [build.environment]
+    PYTHON_VERSION = "3.11.9"
+  
+  # Build command (if you want to serve static files)
+  # command = "echo 'This is a Python application - use alternative deployment'"
+  
+  # Publish directory (if you have static files to serve)
+  # publish = "public"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Note: Netlify is not suitable for Python applications
+# Consider using:
+# - Heroku
+# - Railway
+# - Render
+# - DigitalOcean App Platform
+# - AWS Elastic Beanstalk
+# - Google Cloud Run
