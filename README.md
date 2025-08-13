@@ -7,8 +7,20 @@
 
 > **Intelligent document processing and querying system for insurance documents using hybrid LLM processing**
 
-## 🚀 **Quick Deploy to Render (Recommended)**
+## 🚀 **Quick Deploy Options**
 
+### **Option 1: Railway (Recommended - Fastest)**
+**Deploy Claimsure in 3-5 minutes with Railway's optimized build:**
+
+1. **Fork/Clone** this repository
+2. **Sign up** at [railway.app](https://railway.app)
+3. **Create New Project** and connect your repository
+4. **Set environment variables** (API keys)
+5. **Deploy** automatically
+
+📖 **[Complete Railway Deployment Guide](RAILWAY_DEPLOYMENT.md)**
+
+### **Option 2: Render (Alternative)**
 **Deploy Claimsure in 5 minutes with Render's free tier:**
 
 1. **Fork/Clone** this repository

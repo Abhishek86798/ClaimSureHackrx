@@ -68,10 +68,10 @@ class EmbeddingSystem:
             
             # Force garbage collection
             gc.collect()
-            
-        except Exception as e:
+                
+            except Exception as e:
             logger.error(f"Failed to load model {self.model_name}: {e}")
-            raise
+                raise
     
     def add_chunks(self, chunks: List[Dict[str, Any]]):
         """
@@ -134,7 +134,7 @@ class EmbeddingSystem:
             self._build_index()
             
             logger.info(f"Successfully added {len(chunks)} chunks. Total documents: {len(self.documents)}")
-            
+                
         except Exception as e:
             logger.error(f"Error adding chunks: {e}")
             raise
@@ -144,8 +144,8 @@ class EmbeddingSystem:
         try:
             if self.embeddings is None or len(self.embeddings) == 0:
                 logger.warning("No embeddings to build index")
-                return
-            
+            return
+        
             # Get embedding dimension
             dimension = self.embeddings.shape[1]
             
@@ -178,17 +178,17 @@ class EmbeddingSystem:
         try:
             if self.index is None or len(self.documents) == 0:
                 logger.warning("No documents indexed for search")
-                return []
-            
+            return []
+        
             # Encode query
             query_embedding = self.model.encode([query], convert_to_numpy=True)
             faiss.normalize_L2(query_embedding)
-            
+        
             # Search
             scores, indices = self.index.search(query_embedding.astype('float32'), min(top_k, len(self.documents)))
-            
+        
             # Format results
-            results = []
+        results = []
             for i, (score, idx) in enumerate(zip(scores[0], indices[0])):
                 if idx < len(self.documents):
                     doc = self.documents[idx]
@@ -199,8 +199,8 @@ class EmbeddingSystem:
                     })
             
             logger.info(f"Search completed. Found {len(results)} results for query: {query[:50]}...")
-            return results
-            
+        return results
+    
         except Exception as e:
             logger.error(f"Error in search: {e}")
             return []
