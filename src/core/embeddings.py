@@ -1,81 +1,36 @@
 #!/usr/bin/env python3
 """
-Embedding System for Claimsure
-Handles vector embeddings and similarity search
+Lightweight Embedding System for Claimsure
+Uses simple text matching instead of heavy ML libraries
 """
 
 import os
 import logging
-import gc
-import numpy as np
+import re
 from typing import List, Dict, Any, Optional
-from sentence_transformers import SentenceTransformer
-import faiss
-import psutil
+from difflib import SequenceMatcher
 
 logger = logging.getLogger(__name__)
 
-class EmbeddingSystem:
-    """Handles document embeddings and similarity search"""
+class LightweightEmbeddingSystem:
+    """Lightweight document search using text matching"""
     
-    def __init__(self, model_name: str = "all-MiniLM-L6-v2", cache_dir: str = "/tmp/embeddings_cache"):
+    def __init__(self, cache_dir: str = "/tmp/embeddings_cache"):
         """
-        Initialize the embedding system with memory optimization
+        Initialize the lightweight embedding system
         
         Args:
-            model_name: Name of the sentence transformer model
-            cache_dir: Directory to cache model files
+            cache_dir: Directory for caching (not used in lightweight version)
         """
-        self.model_name = model_name
         self.cache_dir = cache_dir
-        self.model = None
         self.documents = []
         self.chunks = []
-        self.embeddings = None
-        self.index = None
         
-        # Memory optimization settings
-        self.max_memory_mb = 512  # Limit memory usage
-        self.chunk_size = 100     # Process chunks in batches
-        
-        # Initialize the model with memory optimization
-        self._initialize_model()
-    
-    def _initialize_model(self):
-        """Initialize the sentence transformer model with memory optimization"""
-        try:
-            logger.info(f"Loading sentence transformer model: {self.model_name}")
-            
-            # Log memory usage before loading
-            process = psutil.Process()
-            memory_before = process.memory_info().rss / 1024 / 1024  # MB
-            logger.info(f"Memory usage for Model loading start: Process: {memory_before:.1f}MB, System: {psutil.virtual_memory().percent:.1f}% ({psutil.virtual_memory().total / 1024 / 1024 / 1024:.0f}GB total) - model={self.model_name}")
-            
-            # Create cache directory if it doesn't exist
-            os.makedirs(self.cache_dir, exist_ok=True)
-            
-            # Load model with memory optimization
-            self.model = SentenceTransformer(
-                self.model_name,
-                cache_folder=self.cache_dir,
-                device='cpu'  # Force CPU to save memory
-            )
-            
-            # Log memory usage after loading
-            memory_after = process.memory_info().rss / 1024 / 1024  # MB
-            memory_used = memory_after - memory_before
-            logger.info(f"Model loaded successfully. Memory used: {memory_used:.1f}MB, Total: {memory_after:.1f}MB")
-            
-            # Force garbage collection
-            gc.collect()
-                
-            except Exception as e:
-            logger.error(f"Failed to load model {self.model_name}: {e}")
-                raise
+        logger.info("Initialized lightweight embedding system")
     
     def add_chunks(self, chunks: List[Dict[str, Any]]):
         """
-        Add chunks to the embedding system with memory optimization
+        Add chunks to the system
         
         Args:
             chunks: List of chunk dictionaries with 'text' field
@@ -85,164 +40,116 @@ class EmbeddingSystem:
                 logger.warning("No chunks provided to add")
                 return
             
-            logger.info(f"Adding {len(chunks)} chunks to embedding system")
+            logger.info(f"Adding {len(chunks)} chunks to lightweight system")
             
-            # Process chunks in batches to manage memory
-            batch_size = min(self.chunk_size, len(chunks))
+            # Store chunks with simple indexing
+            for i, chunk in enumerate(chunks):
+                chunk_data = {
+                    'id': i,
+                    'text': chunk.get('text', ''),
+                    'metadata': chunk.get('metadata', {}),
+                    'keywords': self._extract_keywords(chunk.get('text', ''))
+                }
+                self.chunks.append(chunk_data)
             
-            for i in range(0, len(chunks), batch_size):
-                batch = chunks[i:i + batch_size]
-                
-                # Extract text from chunks
-                texts = [chunk.get('text', '') for chunk in batch]
-                
-                # Generate embeddings for batch
-                batch_embeddings = self.model.encode(
-                    texts,
-                    convert_to_numpy=True,
-                    show_progress_bar=False,
-                    batch_size=8  # Small batch size to save memory
-                )
-                
-                # Add to documents and chunks
-                for j, chunk in enumerate(batch):
-                    self.documents.append({
-                        'id': chunk.get('id', f'doc_{len(self.documents)}'),
-                        'text': chunk.get('text', ''),
-                        'source': chunk.get('source', 'unknown'),
-                        'metadata': chunk.get('metadata', {})
-                    })
-                    self.chunks.append(chunk)
-                
-                # Store embeddings
-                if self.embeddings is None:
-                    self.embeddings = batch_embeddings
-                else:
-                    self.embeddings = np.vstack([self.embeddings, batch_embeddings])
-                
-                # Check memory usage
-                process = psutil.Process()
-                memory_usage = process.memory_info().rss / 1024 / 1024  # MB
-                
-                if memory_usage > self.max_memory_mb:
-                    logger.warning(f"Memory usage high: {memory_usage:.1f}MB. Forcing garbage collection.")
-                    gc.collect()
-                
-                logger.info(f"Processed batch {i//batch_size + 1}/{(len(chunks) + batch_size - 1)//batch_size}")
-            
-            # Build FAISS index
-            self._build_index()
-            
-            logger.info(f"Successfully added {len(chunks)} chunks. Total documents: {len(self.documents)}")
+            logger.info(f"Successfully added {len(self.chunks)} chunks")
                 
         except Exception as e:
-            logger.error(f"Error adding chunks: {e}")
-            raise
-    
-    def _build_index(self):
-        """Build FAISS index for similarity search"""
-        try:
-            if self.embeddings is None or len(self.embeddings) == 0:
-                logger.warning("No embeddings to build index")
-            return
-        
-            # Get embedding dimension
-            dimension = self.embeddings.shape[1]
-            
-            # Create FAISS index
-            self.index = faiss.IndexFlatIP(dimension)  # Inner product for cosine similarity
-            
-            # Normalize embeddings for cosine similarity
-            faiss.normalize_L2(self.embeddings)
-            
-            # Add embeddings to index
-            self.index.add(self.embeddings.astype('float32'))
-            
-            logger.info(f"Built FAISS index with {len(self.embeddings)} vectors of dimension {dimension}")
-            
-        except Exception as e:
-            logger.error(f"Error building FAISS index: {e}")
+            logger.error(f"Failed to add chunks: {e}")
             raise
     
     def search(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
         """
-        Search for similar documents
+        Search for relevant chunks using text similarity
         
         Args:
             query: Search query
             top_k: Number of top results to return
             
         Returns:
-            List of similar documents with scores
+            List of search results with similarity scores
         """
         try:
-            if self.index is None or len(self.documents) == 0:
-                logger.warning("No documents indexed for search")
-            return []
-        
-            # Encode query
-            query_embedding = self.model.encode([query], convert_to_numpy=True)
-            faiss.normalize_L2(query_embedding)
-        
-            # Search
-            scores, indices = self.index.search(query_embedding.astype('float32'), min(top_k, len(self.documents)))
-        
-            # Format results
-        results = []
-            for i, (score, idx) in enumerate(zip(scores[0], indices[0])):
-                if idx < len(self.documents):
-                    doc = self.documents[idx]
+            if not self.chunks:
+                logger.warning("No chunks available for search")
+                return []
+            
+            query_keywords = self._extract_keywords(query.lower())
+            results = []
+            
+            for chunk in self.chunks:
+                # Calculate similarity using multiple methods
+                text_similarity = self._calculate_text_similarity(query, chunk['text'])
+                keyword_similarity = self._calculate_keyword_similarity(query_keywords, chunk['keywords'])
+                
+                # Combined similarity score
+                combined_score = (text_similarity * 0.7) + (keyword_similarity * 0.3)
+                
+                if combined_score > 0.1:  # Only include relevant results
                     results.append({
-                        'document': doc,
-                        'score': float(score),
-                        'rank': i + 1
+                        'document': {
+                            'text': chunk['text'][:200] + '...' if len(chunk['text']) > 200 else chunk['text'],
+                            'metadata': chunk['metadata']
+                        },
+                        'similarity_score': combined_score,
+                        'id': chunk['id']
                     })
             
-            logger.info(f"Search completed. Found {len(results)} results for query: {query[:50]}...")
-        return results
-    
+            # Sort by similarity score and return top_k
+            results.sort(key=lambda x: x['similarity_score'], reverse=True)
+            return results[:top_k]
+            
         except Exception as e:
-            logger.error(f"Error in search: {e}")
+            logger.error(f"Search failed: {e}")
             return []
     
-    def get_total_documents(self) -> int:
-        """Get total number of documents"""
-        return len(self.documents)
+    def _extract_keywords(self, text: str) -> List[str]:
+        """Extract important keywords from text"""
+        # Simple keyword extraction
+        words = re.findall(r'\b\w+\b', text.lower())
+        
+        # Filter out common stop words
+        stop_words = {
+            'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 
+            'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
+            'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could',
+            'should', 'may', 'might', 'can', 'this', 'that', 'these', 'those'
+        }
+        
+        keywords = [word for word in words if word not in stop_words and len(word) > 2]
+        return list(set(keywords))  # Remove duplicates
     
-    def get_total_chunks(self) -> int:
-        """Get total number of chunks"""
-        return len(self.chunks)
+    def _calculate_text_similarity(self, query: str, text: str) -> float:
+        """Calculate text similarity using sequence matching"""
+        try:
+            return SequenceMatcher(None, query.lower(), text.lower()).ratio()
+        except:
+            return 0.0
+    
+    def _calculate_keyword_similarity(self, query_keywords: List[str], text_keywords: List[str]) -> float:
+        """Calculate similarity based on keyword overlap"""
+        if not query_keywords or not text_keywords:
+            return 0.0
+        
+        # Count overlapping keywords
+        overlap = len(set(query_keywords) & set(text_keywords))
+        total = len(set(query_keywords) | set(text_keywords))
+        
+        return overlap / total if total > 0 else 0.0
     
     def clear(self):
-        """Clear all documents and free memory"""
-        try:
-            self.documents = []
-            self.chunks = []
-            self.embeddings = None
-            self.index = None
-            
-            # Force garbage collection
-            gc.collect()
-            
-            logger.info("Embedding system cleared")
-            
-        except Exception as e:
-            logger.error(f"Error clearing embedding system: {e}")
+        """Clear all stored data"""
+        self.documents = []
+        self.chunks = []
+        logger.info("Cleared all data from lightweight embedding system")
     
-    def get_memory_usage(self) -> Dict[str, float]:
-        """Get current memory usage"""
-        try:
-            process = psutil.Process()
-            memory_info = process.memory_info()
-            
-            return {
-                'process_memory_mb': memory_info.rss / 1024 / 1024,
-                'system_memory_percent': psutil.virtual_memory().percent,
-                'total_documents': len(self.documents),
-                'total_chunks': len(self.chunks),
-                'embeddings_shape': self.embeddings.shape if self.embeddings is not None else None
-            }
-            
-        except Exception as e:
-            logger.error(f"Error getting memory usage: {e}")
-            return {}
+    def get_statistics(self) -> Dict[str, Any]:
+        """Get system statistics"""
+        return {
+            "total_chunks": len(self.chunks),
+            "total_documents": len(self.documents),
+            "system_type": "lightweight_text_matching"
+        }
+
+# Alias for backward compatibility
+EmbeddingSystem = LightweightEmbeddingSystem
